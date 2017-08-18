@@ -1,6 +1,17 @@
 const fs = require("fs");
 const fsPath = require("fs-path");
 var outDir = __dirname + '/out';
+function logError(msg){
+    fs.readFile('./setuplog.txt', 'utf8', function (err,data) {
+        if (err) {
+          return console.log(err);
+        }
+        var result = data+"\n"+msg;
+        fs.writeFile('./setuplog.txt', result, 'utf8', function (err) {
+           if (err) return console.log(err);
+        });
+      });
+}
 function settle(unique_key, file) {
     if (file == "job_history") {
         var tables = {
@@ -11,8 +22,9 @@ function settle(unique_key, file) {
         }
         fs.readdir(__dirname + '/explore/' + unique_key + '/job_history', function (err, files) {
             files.forEach(file => {
-                var text = fs.readFileSync(__dirname + '/explore/' + unique_key + '/job_history/' + file, 'utf-8');
+                
                 try {
+                    var text = fs.readFileSync(__dirname + '/explore/' + unique_key + '/job_history/' + file, 'utf-8');
                     var targetData = JSON.parse(text);
                     if (targetData) {
 
@@ -44,6 +56,7 @@ function settle(unique_key, file) {
                     }
                 } catch (e) {
                     console.log('Invalid JSON at ' + unique_key + '/job_history/' + file)
+                    logError('Invalid JSON at ' + unique_key + '/job_history/' + file);
                 }
 
             });
@@ -70,8 +83,9 @@ function settle(unique_key, file) {
 
     } else {
         var targetFile = __dirname + '/explore/' + unique_key + '/' + file;
-        var text = fs.readFileSync(targetFile, 'utf-8');
+        
         try {
+            var text = fs.readFileSync(targetFile, 'utf-8');
             var jsonFormat = JSON.parse(text);
             var targetData = null;
             switch (file) {
@@ -105,7 +119,8 @@ function settle(unique_key, file) {
                 });
             }
         } catch (e) {
-            console.log('Invalid JSON at ' + unique_key + '/job_history/' + file)
+            console.log('Invalid JSON at ' + unique_key + '/' + file)
+            logError('Invalid JSON at ' + unique_key + '/' + file);
         }
 
     }
