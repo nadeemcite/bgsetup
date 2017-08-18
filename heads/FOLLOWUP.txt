@@ -1,0 +1,1 @@
+FUD:string,FUBY:string,REMARKS:string,SFLG:string,fileName:string,unique_key:string

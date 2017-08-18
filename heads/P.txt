@@ -1,0 +1,1 @@
+PN:string,PD:string,IQTY:string,PAMT:string,PBILLABLETYPE:string,fileName:string,unique_key:string

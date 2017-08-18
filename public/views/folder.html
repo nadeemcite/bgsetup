@@ -1,0 +1,44 @@
+<div>
+    <a ng-click="selectFile('HistoryMaster')" href="">HistoryMaster</a><br />
+    <a ng-click="selectFile('HistoryHDR.json')" href="">HistoryHDR.json</a><br />
+    <a ng-click="selectFile('NewCustomerVehicleDetails')" href="">NewCustomerVehicleDetails</a><br />
+    <a ng-click="selectFile('job_history',true)" href="">job_history</a><br />
+</div>
+
+<div>
+    <button type="button" ng-csv="getArray(table)" filename="test.csv">Export</button>
+    <table border=1 ng-show='table.length>0'>
+        <thead>
+            <tr>
+                <td>Unique Key</td>
+                <td ng-repeat="col in rows">{{col}}</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="row in table">
+                <td>{{unique_key}}</td>
+                <td ng-repeat="col in rows">{{row[col]}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div ng-repeat="(tbl,val) in tables">
+        <br>
+        <strong>Data Source : {{tbl}}</strong>
+        <table border=1 ng-show='tables'>
+
+            <thead>
+                <tr>
+                    <td>Unique Key</td>
+                    <td ng-repeat="(col,val) in tables[tbl][0]">{{col}}</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="row in tables[tbl]">
+                    <td>{{unique_key}}</td>
+                    <td ng-repeat="(key,val) in row">{{val}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
