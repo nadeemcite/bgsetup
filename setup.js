@@ -21,7 +21,7 @@ function settle(unique_key, file) {
             'D': []
         }
         fs.readdir(__dirname + '/explore/' + unique_key + '/job_history', function (err, files) {
-            files.forEach(file => {
+            files && files.forEach(file => {
                 
                 try {
                     var text = fs.readFileSync(__dirname + '/explore/' + unique_key + '/job_history/' + file, 'utf-8');
