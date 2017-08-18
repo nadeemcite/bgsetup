@@ -2,12 +2,12 @@ const fs = require("fs");
 const fsPath = require("fs-path");
 var outDir = __dirname + '/out';
 function logError(msg){
-    fs.readFile('./setuplog.txt', 'utf8', function (err,data) {
+    fs.readFile(__dirname +'/setuplog.txt', 'utf8', function (err,data) {
         if (err) {
           return console.log(err);
         }
         var result = data+"\n"+msg;
-        fs.writeFile('./setuplog.txt', result, 'utf8', function (err) {
+        fs.writeFile(__dirname +'/setuplog.txt', result, 'utf8', function (err) {
            if (err) return console.log(err);
         });
       });
