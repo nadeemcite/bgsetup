@@ -1,143 +1,120 @@
 const fs = require("fs");
 const fsPath = require("fs-path");
+const rjobfiles=require('./readjobfiles');
 var outDir = __dirname + '/out';
-function logError(msg){
-    fs.readFile(__dirname +'/setuplog.txt', 'utf8', function (err,data) {
-        if (err) {
-          return console.log(err);
-        }
-        var result = data+"\n"+msg;
-        fs.writeFile(__dirname +'/setuplog.txt', result, 'utf8', function (err) {
-           if (err) return console.log(err);
-        });
-      });
+function logError(msg) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            fs.appendFile(__dirname + '/setuplog.txt', "\n" + msg, 'utf8', function (err, data) {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve('Success');
+                }
+            });
+        }, 2000);
+    });
 }
 function settle(unique_key, file) {
-    if (file == "job_history") {
-        var tables = {
-            'FOLLOWUP': [],
-            'P': [],
-            'L': [],
-            'D': []
-        }
-        fs.readdir(__dirname + '/explore/' + unique_key + '/job_history', function (err, files) {
-            files && files.forEach(file => {
-                
+    return new Promise((resolve, reject) => {        
+            if (file == "job_history") {
+                rjobfiles.readJobHistoryFolder(unique_key).then((data)=>{
+                    resolve(data);
+                },(error)=>{                    
+                    resolve(error);
+                });
+            } else {
+                var targetFile = __dirname + '/explore/' + unique_key + '/' + file;
                 try {
-                    var text = fs.readFileSync(__dirname + '/explore/' + unique_key + '/job_history/' + file, 'utf-8');
-                    var targetData = JSON.parse(text);
-                    if (targetData) {
+                    var text = fs.readFileSync(targetFile, 'utf-8');
+                    var jsonFormat = JSON.parse(text);
+                    var targetData = null;
+                    switch (file) {
+                        case 'HistoryHDR.json':
+                            targetData = jsonFormat.HHDR;
+                            break;
+                        case 'HistoryMaster':
+                            targetData = jsonFormat.PS;
+                            break;
+                        case 'NewCustomerVehicleDetails':
+                            targetData = [jsonFormat];
+                            break;
+                    }
 
-                        var fArray = targetData.FOLLOWUP.map(function (r) {
-                            r.fileName = file;
-                            r.unique_key = unique_key;
-                            return r;
+                    if (targetData) {
+                        var mappedData = targetData.map((row) => {
+                            row.unique_key = unique_key;
+                            return row;
                         });
-                        console.lo
-                        tables.FOLLOWUP = tables.FOLLOWUP.concat(fArray);
-                        var pArray = targetData.P.map(function (r) {
-                            r.fileName = file;
-                            r.unique_key = unique_key;
-                            return r;
+                        var keys = Object.keys(mappedData[0]);
+                        var hText = keys.join(":string,") + ":string"
+                        fsPath.writeFile(__dirname + '/heads/' + file + '.txt', hText, function (err) {
+                            if (err) throw err;
                         });
-                        tables.P = tables.P.concat(pArray);
-                        var lArray = targetData.L.map(function (r) {
-                            r.fileName = file;
-                            r.unique_key = unique_key;
-                            return r;
+                        var json2csv = require('json2csv');
+                        var csv = json2csv({ data: mappedData, fields: keys, hasCSVColumnTitle: false, eol: '\n' });
+                        fsPath.writeFile(__dirname + '/out/' + file + '/' + unique_key + '.csv', csv, function (err) {
+                            if (err) reject(err);
+                            resolve('success');
                         });
-                        tables.L = tables.L.concat(lArray);
-                        var dArray = targetData.D.map(function (r) {
-                            r.fileName = file;
-                            r.unique_key = unique_key;
-                            return r;
-                        });
-                        tables.D = tables.D.concat(dArray);
+                    }else{
+                        reject('error no proper data '+unique_key);
+                        console.log('-Invalid JSON at ' + unique_key + '/' + file)
+                        logError('-Invalid JSON at ' + unique_key + '/' + file);    
                     }
                 } catch (e) {
-                    console.log('Invalid JSON at ' + unique_key + '/job_history/' + file)
-                    logError('Invalid JSON at ' + unique_key + '/job_history/' + file);
-                }
-
-            });
-            for (let key in tables) {
-                if (tables[key].length > 0) {
-                    var keys = Object.keys(tables[key][0]);
-                    var hText = keys.join(":string,") + ":string";
-                    fsPath.writeFile(__dirname + '/heads/' + key + '.txt', hText, function (err) {
-                        if (err) throw err;
-                        11111
-                    });
-                    var json2csv = require('json2csv');
-                    var csv = json2csv({ data: tables[key], fields: keys, hasCSVColumnTitle: false, eol: '\n' });
-                    fsPath.writeFile(__dirname + '/out/job_history/' + key + '/' + unique_key + '.csv', csv, function (err) {
-                        if (err) throw err;
-                        11111
-                    });
+                    reject('error parsing data '+unique_key);
+                    console.log('Invalid JSON at ' + unique_key + '/' + file)
+                    logError('Invalid JSON at ' + unique_key + '/' + file);
                 }
             }
-        });
-
-
-
-
-    } else {
-        var targetFile = __dirname + '/explore/' + unique_key + '/' + file;
         
-        try {
-            var text = fs.readFileSync(targetFile, 'utf-8');
-            var jsonFormat = JSON.parse(text);
-            var targetData = null;
-            switch (file) {
-                case 'HistoryHDR.json':
-                    targetData = jsonFormat.HHDR;
-                    break;
-                case 'HistoryMaster':
-                    targetData = jsonFormat.PS;
-                    break;
-                case 'NewCustomerVehicleDetails':
-                    targetData = [jsonFormat];
-                    break;
-            }
-
-            if (targetData) {
-                var mappedData = targetData.map((row) => {
-                    row.unique_key = unique_key;
-                    return row;
-                });
-                var keys = Object.keys(mappedData[0]);
-                var hText = keys.join(":string,") + ":string"
-                fsPath.writeFile(__dirname + '/heads/' + file + '.txt', hText, function (err) {
-                    if (err) throw err;
-                    11111
-                });
-                var json2csv = require('json2csv');
-                var csv = json2csv({ data: mappedData, fields: keys, hasCSVColumnTitle: false, eol: '\n' });
-                fsPath.writeFile(__dirname + '/out/' + file + '/' + unique_key + '.csv', csv, function (err) {
-                    if (err) throw err;
-                    11111
-                });
-            }
-        } catch (e) {
-            console.log('Invalid JSON at ' + unique_key + '/' + file)
-            logError('Invalid JSON at ' + unique_key + '/' + file);
-        }
-
-    }
-
-
+    });
 }
 fs.readdir(__dirname + '/explore', function (err, items) {
-    items.forEach((unique_key) => {
-
-
-        settle(unique_key, 'HistoryHDR.json');
-        settle(unique_key, 'HistoryMaster');
-        settle(unique_key, 'NewCustomerVehicleDetails');
-        settle(unique_key, 'job_history');
-        console.log('Processing ' + unique_key);
-
-
-
+    var promiseArray=[];
+    var promises=items.map((unique_key) => {
+        return new Promise((resolve,reject)=>{            
+            console.log('Processing ' + unique_key);
+            var in_pr=[
+                settle(unique_key, 'HistoryHDR.json'),
+                settle(unique_key, 'HistoryMaster'),
+                settle(unique_key, 'NewCustomerVehicleDetails'),
+                settle(unique_key, 'job_history')
+            ];
+            var final=in_pr.reduce((prev,now)=>{
+                if(prev){
+                    return prev.then(()=>{
+                        return now;
+                    },(d)=>{
+                        return now;
+                    })
+                }else{
+                    return now;
+                }
+            },null);
+            final.then(()=>{
+                resolve('done');
+            },(d)=>{                
+                console.log('handled '+d)
+                resolve('done');
+            })
+        });
     });
+    var finalFilePromise=promises.reduce((prev,now)=>{
+        if(prev){
+           return prev.then(()=>{
+                return now;
+            },()=>{
+                return now;
+            })
+        }else{
+            return now;
+        }
+    },null);
+    finalFilePromise.then(()=>{
+        console.log('done');
+    },()=>{
+        console.log('done');
+    })
 });

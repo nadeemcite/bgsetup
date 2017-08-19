@@ -1,0 +1,41 @@
+
+-Invalid JSON at ap22l0467/HistoryHDR.json
+-Invalid JSON at ap22l0467/HistoryMaster
+-Invalid JSON at ap2or4255/HistoryHDR.json
+-Invalid JSON at ap2or4255/HistoryMaster
+-Invalid JSON at ap9ck1455/HistoryHDR.json
+-Invalid JSON at ap9ck1455/HistoryMaster
+error joining ap13r0982
+No job history files in ap22l0467
+No job history files in ap2or4255
+No job history files in ap9ck1455
+-Invalid JSON at ap22l0467/HistoryHDR.json
+-Invalid JSON at ap22l0467/HistoryMaster
+-Invalid JSON at ap2or4255/HistoryHDR.json
+-Invalid JSON at ap2or4255/HistoryMaster
+-Invalid JSON at ap9ck1455/HistoryHDR.json
+-Invalid JSON at ap9ck1455/HistoryMaster
+error joining ap13r0982
+No job history files in ap22l0467
+No job history files in ap2or4255
+No job history files in ap9ck1455
+-Invalid JSON at ap22l0467/HistoryHDR.json
+-Invalid JSON at ap22l0467/HistoryMaster
+-Invalid JSON at ap2or4255/HistoryHDR.json
+-Invalid JSON at ap2or4255/HistoryMaster
+-Invalid JSON at ap9ck1455/HistoryHDR.json
+-Invalid JSON at ap9ck1455/HistoryMaster
+error joining ap13r0982
+No job history files in ap22l0467
+No job history files in ap2or4255
+No job history files in ap9ck1455
+-Invalid JSON at ap22l0467/HistoryHDR.json
+-Invalid JSON at ap22l0467/HistoryMaster
+-Invalid JSON at ap2or4255/HistoryHDR.json
+-Invalid JSON at ap2or4255/HistoryMaster
+-Invalid JSON at ap9ck1455/HistoryHDR.json
+-Invalid JSON at ap9ck1455/HistoryMaster
+error joining ap13r0982
+No job history files in ap22l0467
+No job history files in ap9ck1455
+No job history files in ap2or4255
